@@ -9,6 +9,9 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 
+import java.util.List;
+
+import wrx.aidlserver.DataItem;
 import wrx.aidlserver.IRemoteService;
 
 public class MainActivity extends Activity {
@@ -34,13 +37,29 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.bt).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.connect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent1 = new Intent();
                 intent1.setAction("wrx.aidlserver.service");
                 intent1.setPackage("wrx.aidlserver");
                 bindService(intent1, mConnection, BIND_AUTO_CREATE);
+            }
+        });
+
+        findViewById(R.id.getdata).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (mIRemoteService != null) {
+                        List<DataItem> dataItems = mIRemoteService.getDateItemList();
+                        for (int i = 0; i < dataItems.size(); i ++) {
+                            Log.e("aidlclient", dataItems.get(i).toString());
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("aidlclient", "Exception", e);
+                }
             }
         });
 
